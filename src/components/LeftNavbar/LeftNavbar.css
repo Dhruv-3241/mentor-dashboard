@@ -1,9 +1,11 @@
 .LeftNavbar{
-    background: linear-gradient(45deg, #013aab64 0%,#ffffff 50%, #013aab61 100%);
+    /* background: linear-gradient(45deg, #013aab64 0%,#ffffff 50%, #013aab61 100%); */
+    background-color: rgb(219, 219, 219);
     position: fixed;
     height: 100%;
     width: 15%;
     display: flex;
+    /* color: white; */
     flex-direction: column;
     justify-content: space-between;
     align-items: center;

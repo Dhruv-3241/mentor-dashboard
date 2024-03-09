@@ -5,6 +5,7 @@
     flex-direction: column;
     justify-content: space-between;
     /* background-color: rgba(154, 145, 203, 0.687); */
+    background: linear-gradient(90deg, rgb(219, 219, 219) 0%,rgba(219, 219, 219,50) 50%, rgb(219, 219, 219) 100%);
 }
 
 .table{

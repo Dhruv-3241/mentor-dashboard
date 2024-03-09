@@ -1,8 +1,8 @@
 .middle{
     width: 100%;
     height: 100%;
-    background-color: whitesmoke;
-    /* background: linear-gradient(45deg, #013aab64 0%,#ffffff 50%, #013aab61 100%); */
+    /* background-color: whitesmoke; */
+    background: linear-gradient(90deg, rgb(219, 219, 219) 0%,rgba(219, 219, 219,50) 50%, rgb(219, 219, 219) 100%);
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
