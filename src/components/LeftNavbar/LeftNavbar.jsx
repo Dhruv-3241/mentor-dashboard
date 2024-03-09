@@ -78,7 +78,7 @@ export const LeftNavbar = ({ setView }) => {
           </ul>
         </div>
         <div className="container3">
-          <h2>Students Assigned</h2>
+          {/* <h2>Students Assigned</h2>
           <ul>
             <li>
               <img src={icons5} className="linkimg1" alt=""></img>
@@ -96,7 +96,7 @@ export const LeftNavbar = ({ setView }) => {
               <img src={icons5} className="linkimg1" alt=""></img>
               Student 4
             </li>
-          </ul>
+          </ul> */}
         </div>
       </div>
       <div className="box2">
