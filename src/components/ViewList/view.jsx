@@ -66,10 +66,15 @@ function createData(Student, idea, evalu, pitch, unique, research, design) {
   };
 }
 
-
-export const View = ({ students, setStudents,canEdit,setCanEdit,mentorName }) => {
+export const View = ({
+  students,
+  setStudents,
+  canEdit,
+  setCanEdit,
+  mentorName,
+}) => {
   const [open, setOpen] = React.useState(false);
-  const [open2,setOpen2] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
   console.log(students);
   const [frows, setFrows] = React.useState(
     students.map((student) =>
@@ -100,18 +105,29 @@ export const View = ({ students, setStudents,canEdit,setCanEdit,mentorName }) =>
     setOpen2(false);
   };
 
+  const sendMail = () => {
+    fetch(mentorUrl(`sendmail`), {
+      method: "POST",
+      body: JSON.stringify({ mentor: mentorName }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    handleClose();
+  };
+
   const handleLock = () => {
     console.log("handle");
     fetch(mentorUrl(`lock`), {
       method: "POST",
       body: JSON.stringify({ mentor: mentorName }),
       headers: {
-        "Content-Type": "application/json"
-  }
+        "Content-Type": "application/json",
+      },
     });
     setCanEdit(false);
     handleClose2();
-  }
+  };
 
   const handleMarksFilter = (marks = 0) => {
     // Write code to filter the table data based upon the fact that whether the students have been assigned marks or not
@@ -310,12 +326,17 @@ export const View = ({ students, setStudents,canEdit,setCanEdit,mentorName }) =>
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={e => handleLock()}>Yes</Button>
+                <Button onClick={(e) => handleLock()}>Yes</Button>
                 <Button onClick={handleClose2}>No</Button>
               </DialogActions>
             </Dialog>
           </Backdrop>
-          <Button variant="contained" color="success" onClick={handleOpen} disabled={canEdit}>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleOpen}
+            disabled={canEdit}
+          >
             Final Submit
           </Button>
           <Backdrop
@@ -340,8 +361,8 @@ export const View = ({ students, setStudents,canEdit,setCanEdit,mentorName }) =>
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
+                <Button onClick={sendMail}>Yes</Button>
                 <Button onClick={handleClose}>No</Button>
-                <Button onClick={handleClose}>Yes</Button>
               </DialogActions>
             </Dialog>
           </Backdrop>
