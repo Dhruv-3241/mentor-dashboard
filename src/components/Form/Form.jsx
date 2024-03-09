@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+
 // import "./Form.css";
-import { Box, TextField, Typography } from "@mui/material";  
+
 
 // const rows = [
 //     createData('Ideation', 9, 8, 8, 9),
@@ -17,55 +17,3 @@ import { Box, TextField, Typography } from "@mui/material";
 //     createData('Total Marks', 86, 92, 88, 92)
 //   ];
 
-export const Form = ({ student_name, marks }) => {
-    console.log({student_name,marks})
-    const [values, setValues] = useState(marks.map(x => x.value));
-
-    return (
-        <Box >
-            <Typography variant="h6" color={"black"}>
-                {student_name}
-            </Typography>
-            <br />
-            <br />
-            <Box sx={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: 2.5,
-        }}>
-            {marks.map((mark, index) => (
-                <TextInput mark={mark} value={values} setValue={setValues} idx={index} key={index} />
-            ))}
-                </Box>
-        </Box>
-    );
-};
-
-
-function TextInput({ mark, value, setValue,idx }) {
-    const [v, setV] = useState(value[idx]);
-
-    const handleChange = (val) => {
-        console.log(val);
-        if (val > 10) val = 10;
-        if (val < 0) val = 0;
-        setV(val);
-        const newValue = [...value];
-        newValue[idx] = val;
-        setValue(newValue);
-    }
-
-    return (
-        <TextField
-            label={mark.name}
-            value={v}
-            type="number"
-            variant="outlined"
-            onChange={(e, val) => { handleChange(e.target.value) }}
-            sx={{
-                // padding: 1.5
-            }}
-        />
-    )
-}

@@ -1,6 +1,21 @@
 import "./Add.css";
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Slide,
+} from "@mui/material";
+import { mentorUrl, studentUrl } from "../../utils";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const columns = [
   { field: "id", headerName: "ID", flex: 1 },
@@ -34,7 +49,7 @@ const columns = [
 const rows = [
   {
     id: 1,
-    name: "Dhruv Srivastav",
+    name: "Dhruv Srivastava",
     rollno: "2101211CS",
     stream: "CSE",
     mentor: "",
@@ -69,16 +84,73 @@ const rows = [
   },
 ];
 
-export const Add = () => {
+export const Add = ({ students, setStudents, mentorName }) => {
   const [selectedStudents, setSelectedStudents] = React.useState([]);
-  // alreadyExistingStudent
-  const [AES, setAES] = React.useState(rows.filter((x) => x.mentor === "A"));
-  console.log(AES.length + selectedStudents.length);
+
+  // Already Existing Student ==> AES
+  const [AES, setAES] = React.useState(
+    students.filter((x) => x.mentor === mentorName)
+  );
+  // console.log(AES.length + selectedStudents.length);
+
+  const [open, setOpen] = React.useState(false);
+
+  const [allStud, setAllStud] = React.useState([]);
+
+  React.useEffect(() => {
+    fetch(studentUrl("/all"))
+      .then((res) => res.json())
+      .then((data) => {
+        setAllStud(
+          data.data.map((x, i) => {
+            return {
+              ...x,
+              id: i + 1,
+            };
+          })
+        );
+      });
+  }, []);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = () => {
+    if (!selectedStudents.length) {
+      handleClose();
+      return;
+    }
+    console.log(AES,selectedStudents,allStud)
+    const newStudents = [...AES.map(x => x && x.roll_no), ...selectedStudents.map((x) =>x && allStud[x - 1].roll_no)];
+    const body = {
+      mentor: mentorName,
+      rollnos: newStudents,
+    };
+    console.log(body);
+    fetch(mentorUrl("bulkAdd"), {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json"
+  }
+    }).then(d => d.json()).then(res => console.log(res));
+    setStudents(newStudents);
+    handleClose();
+  };
+
   return (
     <div className="container">
+      <div className="head">
+        <h1>Add Student to Mentor</h1>
+      </div>
       <div
         style={{
-          height: "90%",
+          height: "60%",
           width: "100%",
           display: "flex",
           flexDirection: "column",
@@ -86,12 +158,12 @@ export const Add = () => {
         }}
       >
         <DataGrid
-          rows={rows}
+          rows={allStud}
           columns={columns}
-          isRowSelectable={(params) =>
-            !params.row.mentor &&
-            selectedStudents.length + AES.length < 4 &&
-            selectedStudents.length + AES.length > 2
+          isRowSelectable={(params) => {
+            return !params.row.mentor.trim() &&
+              selectedStudents.length + AES.length < 4 
+          }
           }
           sx={{
             //align headers to center
@@ -110,6 +182,40 @@ export const Add = () => {
           checkboxSelection
         />
       </div>
+      <Box className="box">
+        <Button variant="contained" onClick={handleClickOpen}>
+          Add Student
+        </Button>
+        <Dialog
+          open={open}
+          TransitionComponent={Transition}
+          keepMounted
+          // onClose={handleClose}
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle>
+            {
+              <h3>
+                Adding a <b>New Student</b> to mentor
+              </h3>
+            }
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              By adding this new student you will have to assess his project as
+              per the criterias specified by you earlier.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button color="success" variant="outlined" onClick={handleSubmit}>
+              Sure
+            </Button>
+            <Button color="warning" variant="outlined" onClick={handleClose}>
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
     </div>
   );
 };

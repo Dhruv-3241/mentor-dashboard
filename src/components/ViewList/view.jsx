@@ -1,24 +1,31 @@
 import "./view.css";
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Slide from "@mui/material/Slide";
-import React from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  TableContainer,
+  Slide,
+  DialogTitle,
+  DialogContentText,
+  DialogContent,
+  DialogActions,
+  Dialog,
+  Button,
+  CircularProgress,
+  Backdrop,
+  Paper,
+  TableRow,
+  TableHead,
+  TableCell,
+  tableCellClasses,
+  TableBody,
+  Table,
+} from "@mui/material";
 import { deepClone } from "@mui/x-data-grid/utils/utils";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { mentorUrl } from "../../utils";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -59,16 +66,25 @@ function createData(Student, idea, evalu, pitch, unique, research, design) {
   };
 }
 
-const rows = [
-  createData("Student1", 9, 9, 8, 9, 8, 9),
-  createData("Student2", 8, 8, 9, 8, 9, 8),
-  createData("Student3", 7, 7, 8, 8, 9, 9),
-  createData("Student4", 7, 9, undefined, 8, 7, 9),
-];
 
-export const View = () => {
+export const View = ({ students, setStudents,canEdit,setCanEdit,mentorName }) => {
   const [open, setOpen] = React.useState(false);
-  const [frows, setFrows] = React.useState(rows);
+  const [open2,setOpen2] = React.useState(false);
+  console.log(students);
+  const [frows, setFrows] = React.useState(
+    students.map((student) =>
+      createData(
+        student.name,
+        student.marks[0]?.value,
+        student.marks[1]?.value,
+        student.marks[2]?.value,
+        student.marks[3]?.value,
+        student.marks[4]?.value,
+        student.marks[5]?.value
+      )
+    )
+  );
+  console.log(frows);
   const handleClose = () => {
     setOpen(false);
   };
@@ -76,18 +92,111 @@ export const View = () => {
     setOpen(true);
   };
 
+  const handleOpen2 = () => {
+    setOpen2(true);
+  };
+
+  const handleClose2 = () => {
+    setOpen2(false);
+  };
+
+  const handleLock = () => {
+    console.log("handle");
+    fetch(mentorUrl(`lock`), {
+      method: "POST",
+      body: JSON.stringify({ mentor: mentorName }),
+      headers: {
+        "Content-Type": "application/json"
+  }
+    });
+    setCanEdit(false);
+    handleClose2();
+  }
+
   const handleMarksFilter = (marks = 0) => {
     // Write code to filter the table data based upon the fact that whether the students have been assigned marks or not
     if (marks === -1) {
-      setFrows(rows);
+      setFrows(
+        students.map((student) => {
+          return createData(
+            student.name,
+            student.marks[0]?.value,
+            student.marks[1]?.value,
+            student.marks[2]?.value,
+            student.marks[3]?.value,
+            student.marks[4]?.value,
+            student.marks[5]?.value
+          );
+        })
+      );
       return;
     }
-    const filteredRows = rows.filter((row) => {
-      return marks ? row["Total Marks"] : !row["Total Marks"];
-    });
-
+    const filteredRows = students
+      .filter((row) => {
+        return marks
+          ? row["Total Marks"] !== "N/A"
+          : row["Total Marks"] === "N/A";
+      })
+      .map((student) => {
+        return createData(
+          student.name,
+          student.marks[0]?.value,
+          student.marks[1]?.value,
+          student.marks[2]?.value,
+          student.marks[3]?.value,
+          student.marks[4]?.value,
+          student.marks[5]?.value
+        );
+      });
     setFrows(filteredRows);
   };
+
+  const handlePDFConvert = () => {
+    // Write code to convert the table data into a pdf file
+    const doc = new jsPDF({
+      orientation: "portrait",
+    });
+
+    doc.text("Students Data", 10, 10);
+    autoTable(doc, {
+      styles: {
+        theme: "grid",
+        margin: 10,
+        padding: 10,
+        headStyles: {
+          fillColor: [154, 145, 203],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          halign: "center",
+        },
+      },
+      head: [
+        [
+          "Students",
+          "Ideation",
+          "Evaluation",
+          "Pitch",
+          "Uniqueness",
+          "Research",
+          "Design",
+          "Total Marks",
+        ],
+      ],
+      body: frows.map((row) => [
+        row.Student,
+        row.Ideation,
+        row.Evaluation,
+        row.Pitch,
+        row.Uniqueness,
+        row.Research,
+        row.Design,
+        row["Total Marks"],
+      ]),
+    });
+
+    doc.save("Final Marksheet.pdf");
+  };
+
   return (
     <>
       <div className="container">
@@ -178,21 +287,19 @@ export const View = () => {
           </TableContainer>
         </div>
         <div className="btns">
-          <Button variant="contained" color="warning" onClick={handleOpen}>
+          <Button variant="contained" color="warning" onClick={handleOpen2}>
             Lock Students Data
           </Button>
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={open}
-            onClick={handleClose}
+            open={open2}
           >
             <CircularProgress color="inherit" />
 
             <Dialog
-              open={open}
+              open={open2}
               TransitionComponent={Transition}
               keepMounted
-              onClose={handleClose}
               aria-describedby="alert-dialog-slide-description"
             >
               <DialogTitle>{"Want to lock the Data!"}</DialogTitle>
@@ -203,18 +310,18 @@ export const View = () => {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleClose}>Yes</Button>
-                <Button onClick={handleClose}>No</Button>
+                <Button onClick={e => handleLock()}>Yes</Button>
+                <Button onClick={handleClose2}>No</Button>
               </DialogActions>
             </Dialog>
           </Backdrop>
-          <Button variant="contained" color="success" onClick={handleOpen}>
+          <Button variant="contained" color="success" onClick={handleOpen} disabled={canEdit}>
             Final Submit
           </Button>
           <Backdrop
             sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={open}
-            onClick={handleClose}
+            // onClick={handleClose}
           >
             <CircularProgress color="inherit" />
 
@@ -222,7 +329,7 @@ export const View = () => {
               open={open}
               TransitionComponent={Transition}
               keepMounted
-              onClose={handleClose}
+              // onClose={handleClose}
               aria-describedby="alert-dialog-slide-description"
             >
               <DialogTitle>{"Final Submission Step"}</DialogTitle>
@@ -238,7 +345,9 @@ export const View = () => {
               </DialogActions>
             </Dialog>
           </Backdrop>
-          {/* Write code for making a button having the css same as the previous buttons, these buttons are used to filter the table data based upon the fact that whether the students have been assigned marks or not */}
+          <Button variant="contained" onClick={handlePDFConvert}>
+            Export
+          </Button>
         </div>
         <div className="footer">
           <h4>*All the marks have been alloted out of 10</h4>

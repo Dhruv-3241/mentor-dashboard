@@ -6,3 +6,24 @@
     height: 100vh;
     /* background-color: red; */
 }
+
+.container .head{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 10%;
+    margin-bottom: 5%;
+    /* background-color: green; */
+}
+
+.container .box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 10%;
+    /* background-color: blue; */
+}

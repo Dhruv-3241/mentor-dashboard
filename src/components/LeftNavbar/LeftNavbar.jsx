@@ -7,14 +7,16 @@ import icons3 from "../../assets/left_navbar/icons8-add-30.png";
 import icons5 from "../../assets/left_navbar/icons8-student-50.png";
 import icons6 from "../../assets/left_navbar/icons8-help-50.png";
 import icons7 from "../../assets/left_navbar/icons8-logout-50.png";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 
 export const LeftNavbar = ({ setView }) => {
   const theme = useTheme();
