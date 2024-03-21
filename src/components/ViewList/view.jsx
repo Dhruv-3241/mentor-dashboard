@@ -52,7 +52,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function createData(Student, idea, evalu, pitch, unique, research, design) {
-  return {
+  console.log("idea", idea);
+  console.log("Result", (idea + evalu + pitch + unique + research + design));
+  const obj =  {
     Student,
     Ideation: idea ?? "N/A",
     Evaluation: evalu ?? "N/A",
@@ -60,10 +62,11 @@ function createData(Student, idea, evalu, pitch, unique, research, design) {
     Uniqueness: unique ?? "N/A",
     Research: research ?? "N/A",
     Design: design ?? "N/A",
-    "Total Marks": isNaN(idea + evalu + pitch + unique + research + design)
-      ? "N/A"
-      : idea + evalu + pitch + unique + research + design,
   };
+
+  obj["Total Marks"] = isNaN(obj.Ideation + obj.Evaluation + obj.Pitch + obj.Uniqueness + obj.Research + obj.Design) ? "N/A" : obj.Ideation + obj.Evaluation + obj.Pitch + obj.Uniqueness + obj.Research + obj.Design;
+  console.log(obj)
+  return obj;
 }
 
 export const View = ({
@@ -75,7 +78,17 @@ export const View = ({
 }) => {
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
-  console.log(students);
+  const mStudents = students.map((student) =>
+    createData(
+      student.name,
+      student.marks[0]?.value,
+      student.marks[1]?.value,
+      student.marks[2]?.value,
+      student.marks[3]?.value,
+      student.marks[4]?.value,
+      student.marks[5]?.value
+    )
+  );
   const [frows, setFrows] = React.useState(
     students.map((student) =>
       createData(
@@ -147,11 +160,11 @@ export const View = ({
       );
       return;
     }
+    console.log("Student: ", { students });
     const filteredRows = students
       .filter((row) => {
-        return marks
-          ? row["Total Marks"] !== "N/A"
-          : row["Total Marks"] === "N/A";
+        console.log({row})
+        return marks ? row.marks.every(x => x.value !== null) : row.marks.some(x => x.value === null)
       })
       .map((student) => {
         return createData(
@@ -238,7 +251,7 @@ export const View = ({
               gap: 5,
             }}
           >
-            <Button variant="contained" onClick={(e) => handleMarksFilter(0)}>
+            <Button variant="contained" onClick={(e) => handleMarksFilter(false)}>
               No Marks
             </Button>
             <Button variant="contained" onClick={(e) => handleMarksFilter(1)}>
