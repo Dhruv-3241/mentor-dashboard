@@ -1,6 +1,6 @@
 import React from "react";
 import "./LeftNavbar.css";
-import img from "../../assets/left_navbar/scalar_logo.png";
+import img from "../../assets/left_navbar/Mentor-Logo.png";
 import icons1 from "../../assets/left_navbar/icons8-dashboard-50.png";
 import icons2 from "../../assets/left_navbar/icons8-view-50.png";
 import icons3 from "../../assets/left_navbar/icons8-add-30.png";
@@ -15,7 +15,7 @@ import {
   DialogContentText,
   DialogTitle,
   useMediaQuery,
-  useTheme
+  useTheme,
 } from "@mui/material";
 
 export const LeftNavbar = ({ setView }) => {
@@ -27,7 +27,6 @@ export const LeftNavbar = ({ setView }) => {
   const handleView = (view) => {
     setView(view);
   };
-
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -52,6 +51,8 @@ export const LeftNavbar = ({ setView }) => {
           <div className="logo">
             <img src={img} alt="logo" className="logo_img" />
           </div>
+          <br />
+          <br />
           <div className="compname"></div>
         </div>
         <div className="container2">
@@ -124,7 +125,8 @@ export const LeftNavbar = ({ setView }) => {
               <DialogContent>
                 <DialogContentText>
                   You will be assisted by a company professional shortly. If you
-                  need urgent help then kindly mail on <b>Scalar@customercare.in</b>.
+                  need urgent help then kindly mail on{" "}
+                  <b>Scalar@customercare.in</b>.
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
@@ -156,7 +158,8 @@ export const LeftNavbar = ({ setView }) => {
                 </DialogTitle>
                 <DialogContent>
                   <DialogContentText>
-                    If you logout then you must login again to perform any operations on this page.
+                    If you logout then you must login again to perform any
+                    operations on this page.
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>

@@ -23,8 +23,8 @@ export const RightNavbar = () => {
                         <CircularProgress variant="determinate" value={50} className="progress" style={{ width: '100px', height: '100px' }} thickness={5} />
                     </div>
                     <div className="data">
-                        <h3> Good Morning Dhruv</h3>
-                        <h4> See the profile here</h4>
+                        <h3> Good Morning Tejaswini Ma'am</h3>
+                        <h4> See your profile here</h4>
                     </div>
                 </div>
                 <div className="graph">
